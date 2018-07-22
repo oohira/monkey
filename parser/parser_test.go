@@ -1,0 +1,54 @@
+package parser
+
+import (
+	"testing"
+
+	"github.com/oohira/monkey/ast"
+	"github.com/oohira/monkey/lexer"
+)
+
+func TestLetStatements(t *testing.T) {
+	input := `
+let x = 5;
+let y = 10;
+let foobar = 838383;
+`
+
+	l := lexer.New(input)
+	p := New(l)
+
+	program := p.ParseProgram()
+	if program == nil {
+		t.Fatalf("ParseProgram() returned nil")
+	}
+	if len(program.Statements) != 3 {
+		t.Fatalf("program.Statements does not contain 3 statements. got=%d", len(program.Statements))
+	}
+
+	tests := []struct {
+		expectedIdentifier string
+	}{
+		{"x"},
+		{"y"},
+		{"foobar"},
+	}
+
+	for i, test := range tests {
+		stmt := program.Statements[i]
+		if stmt.TokenLiteral() != "let" {
+			t.Errorf("stmt[%d].TokenLiteral is not 'let'. got=%q", i, stmt.TokenLiteral())
+		}
+		letStmt, ok := stmt.(*ast.LetStatement)
+		if !ok {
+			t.Errorf("stmt[%d] is not *LetStatement. got=%T", i, stmt)
+		}
+		if letStmt.Name.Value != test.expectedIdentifier {
+			t.Errorf("stmt[%d].Name.Value is not '%s'. got=%q",
+				i, test.expectedIdentifier, letStmt.Name.Value)
+		}
+		if letStmt.Name.TokenLiteral() != test.expectedIdentifier {
+			t.Errorf("stmt[%d].Name.TokenLiteral is not '%s'. got=%q",
+				i, test.expectedIdentifier, letStmt.Name.TokenLiteral())
+		}
+	}
+}
