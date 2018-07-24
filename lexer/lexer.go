@@ -24,7 +24,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '=':
 		if l.peekChar() == '=' {
 			l.readChar()
-			tok = token.Token{token.EQ, "=="}
+			tok = token.Token{Type: token.EQ, Literal: "=="}
 		} else {
 			tok = newToken(token.ASSIGN, l.ch)
 		}
@@ -35,7 +35,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '!':
 		if l.peekChar() == '=' {
 			l.readChar()
-			tok = token.Token{token.NOT_EQ, "!="}
+			tok = token.Token{Type: token.NOT_EQ, Literal: "!="}
 		} else {
 			tok = newToken(token.BANG, l.ch)
 		}
@@ -127,5 +127,5 @@ func isDigit(ch byte) bool {
 }
 
 func newToken(tokenType token.TokenType, ch byte) token.Token {
-	return token.Token{tokenType, string(ch)}
+	return token.Token{Type: tokenType, Literal: string(ch)}
 }
