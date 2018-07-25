@@ -1,0 +1,14 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: golang:latest
+    working_directory: /go/src/github.com/oohira/monkey
+    steps:
+      - checkout
+      - run: go version
+      - run: go get github.com/golang/lint/golint
+      - run: golint ./...
+      - run: go vet ./...
+      - run: go test -v ./...
