@@ -9,8 +9,10 @@ import (
 	"github.com/oohira/monkey/token"
 )
 
+// PROMPT is characters to prompt users input.
 const PROMPT = ">> "
 
+// Start starts REPL: reads user's input from in and writes the result to out.
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
 

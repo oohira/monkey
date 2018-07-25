@@ -30,7 +30,7 @@ if (5 < 10) {
 `
 
 	tests := []struct {
-		expectedType    token.TokenType
+		expectedType    token.Type
 		expectedLiteral string
 	}{
 		{token.LET, "let"},
@@ -106,7 +106,7 @@ if (5 < 10) {
 		{token.INT, "10"},
 		{token.SEMICOLON, ";"},
 		{token.INT, "10"},
-		{token.NOT_EQ, "!="},
+		{token.NOTEQ, "!="},
 		{token.INT, "9"},
 		{token.SEMICOLON, ";"},
 
@@ -116,7 +116,7 @@ if (5 < 10) {
 	for i, tt := range tests {
 		tok := l.NextToken()
 		if tok.Type != tt.expectedType {
-			t.Fatalf("tests[%d] - TokenType expected=%q, got=%q",
+			t.Fatalf("tests[%d] - Type expected=%q, got=%q",
 				i, tt.expectedType, tok.Type)
 		}
 		if tok.Literal != tt.expectedLiteral {

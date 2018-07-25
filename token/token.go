@@ -1,12 +1,15 @@
 package token
 
-type TokenType string
+// Type represents the type of a token.
+type Type string
 
+// Token represents a token.
 type Token struct {
-	Type    TokenType
+	Type    Type
 	Literal string
 }
 
+// token Type constants
 const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
@@ -25,7 +28,7 @@ const (
 	LT       = "<"
 	GT       = ">"
 	EQ       = "=="
-	NOT_EQ   = "!="
+	NOTEQ    = "!="
 
 	// Delimiters
 	COMMA     = ","
@@ -46,7 +49,7 @@ const (
 	RETURN   = "RETURN"
 )
 
-var keywords = map[string]TokenType{
+var keywords = map[string]Type{
 	"fn":     FUNCTION,
 	"let":    LET,
 	"true":   TRUE,
@@ -56,7 +59,8 @@ var keywords = map[string]TokenType{
 	"return": RETURN,
 }
 
-func LookupIdent(ident string) TokenType {
+// LookupIdent returns a Type of specified ident.
+func LookupIdent(ident string) Type {
 	if tok, ok := keywords[ident]; ok {
 		return tok
 	}

@@ -2,6 +2,7 @@ package lexer
 
 import "github.com/oohira/monkey/token"
 
+// Lexer represents a lexer of Monkey programming language.
 type Lexer struct {
 	input        string
 	position     int
@@ -9,12 +10,14 @@ type Lexer struct {
 	ch           byte
 }
 
+// New returns a Lexer for the specified input program.
 func New(input string) *Lexer {
 	l := &Lexer{input: input}
 	l.readChar()
 	return l
 }
 
+// NextToken gets the next token if exists, EOF otherwise.
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
@@ -35,7 +38,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '!':
 		if l.peekChar() == '=' {
 			l.readChar()
-			tok = token.Token{Type: token.NOT_EQ, Literal: "!="}
+			tok = token.Token{Type: token.NOTEQ, Literal: "!="}
 		} else {
 			tok = newToken(token.BANG, l.ch)
 		}
@@ -86,7 +89,7 @@ func (l *Lexer) readChar() {
 		l.ch = l.input[l.readPosition]
 	}
 	l.position = l.readPosition
-	l.readPosition += 1
+	l.readPosition++
 }
 
 func (l *Lexer) peekChar() byte {
@@ -126,6 +129,6 @@ func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
 
-func newToken(tokenType token.TokenType, ch byte) token.Token {
+func newToken(tokenType token.Type, ch byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }

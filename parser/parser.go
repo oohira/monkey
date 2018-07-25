@@ -6,12 +6,14 @@ import (
 	"github.com/oohira/monkey/token"
 )
 
+// Parser represents a parser of Monkey programming language.
 type Parser struct {
 	l         *lexer.Lexer
 	curToken  token.Token
 	peekToken token.Token
 }
 
+// New returns a Parser that wraps the specified Lexer l.
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l}
 
@@ -27,6 +29,7 @@ func (p *Parser) nextToken() {
 	p.peekToken = p.l.NextToken()
 }
 
+// ParseProgram parses a program and returns an AST.
 func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
@@ -73,9 +76,9 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	return stmt
 }
 
-func (p *Parser) curTokenIs(t token.TokenType) bool {
+func (p *Parser) curTokenIs(t token.Type) bool {
 	return p.curToken.Type == t
 }
-func (p *Parser) peekTokenIs(t token.TokenType) bool {
+func (p *Parser) peekTokenIs(t token.Type) bool {
 	return p.peekToken.Type == t
 }
