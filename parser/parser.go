@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/oohira/monkey/ast"
 	"github.com/oohira/monkey/lexer"
 	"github.com/oohira/monkey/token"
@@ -11,17 +13,29 @@ type Parser struct {
 	l         *lexer.Lexer
 	curToken  token.Token
 	peekToken token.Token
+	errors    []string
 }
 
 // New returns a Parser that wraps the specified Lexer l.
 func New(l *lexer.Lexer) *Parser {
-	p := &Parser{l: l}
+	p := &Parser{l: l, errors: []string{}}
 
 	// Read two tokens to set both curToken and peekToken
 	p.nextToken()
 	p.nextToken()
 
 	return p
+}
+
+// Errors returns a list of parse error.
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+func (p *Parser) peekError(t token.Type) {
+	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
+		t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
 }
 
 func (p *Parser) nextToken() {
@@ -57,6 +71,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	stmt := &ast.LetStatement{Token: p.curToken}
 
 	if !p.peekTokenIs(token.IDENT) {
+		p.peekError(token.IDENT)
 		return nil
 	}
 	p.nextToken()
@@ -64,6 +79,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
 	if !p.peekTokenIs(token.ASSIGN) {
+		p.peekError(token.ASSIGN)
 		return nil
 	}
 	p.nextToken()
