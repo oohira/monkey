@@ -1,10 +1,15 @@
 package ast
 
-import "github.com/oohira/monkey/token"
+import (
+	"bytes"
+
+	"github.com/oohira/monkey/token"
+)
 
 // Node is the interface that represents AST node.
 type Node interface {
 	TokenLiteral() string
+	String() string
 }
 
 // Statement is the interface that represents a statement in AST.
@@ -24,12 +29,21 @@ type Program struct {
 	Statements []Statement
 }
 
-// TokenLiteral returns a text representation of the program.
+// TokenLiteral returns the first token literal of the program.
 func (p *Program) TokenLiteral() string {
 	if len(p.Statements) > 0 {
 		return p.Statements[0].TokenLiteral()
 	}
 	return ""
+}
+
+// String returns a text representation of the program.
+func (p *Program) String() string {
+	var out bytes.Buffer
+	for _, stmt := range p.Statements {
+		out.WriteString(stmt.String())
+	}
+	return out.String()
 }
 
 // LetStatement represents a let statement.
@@ -39,9 +53,24 @@ type LetStatement struct {
 	Value Expression
 }
 
-// TokenLiteral returns a text representation of the let statement.
+// TokenLiteral returns the first token literal of the let statement.
 func (ls *LetStatement) TokenLiteral() string {
 	return ls.Token.Literal
+}
+
+// String returns a text representation of the let statement.
+func (ls *LetStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.Name.String())
+	out.WriteString(" = ")
+	if ls.Value != nil {
+		out.WriteString(ls.Value.String())
+	}
+	out.WriteString(";")
+
+	return out.String()
 }
 
 func (ls *LetStatement) statementNode() {
@@ -53,12 +82,48 @@ type ReturnStatement struct {
 	ReturnValue Expression
 }
 
-// TokenLiteral returns a text representation of the return statement.
+// TokenLiteral returns the first token literal of the return statement.
 func (rs *ReturnStatement) TokenLiteral() string {
 	return rs.Token.Literal
 }
 
+// String returns a text representation of the return statement.
+func (rs *ReturnStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(rs.TokenLiteral() + " ")
+	if rs.ReturnValue != nil {
+		out.WriteString(rs.ReturnValue.String())
+	}
+	out.WriteString(";")
+
+	return out.String()
+}
+
 func (rs *ReturnStatement) statementNode() {
+}
+
+// ExpressionStatement represents a expression statement.
+type ExpressionStatement struct {
+	Token      token.Token // the first token of the expression
+	Expression Expression
+}
+
+// TokenLiteral returns the first token literal of the expression statement.
+func (es *ExpressionStatement) TokenLiteral() string {
+	return es.Token.Literal
+}
+
+// String returns a text representation of the expression statement.
+func (es *ExpressionStatement) String() string {
+	var out bytes.Buffer
+	if es.Expression != nil {
+		out.WriteString(es.Expression.String())
+	}
+	return out.String()
+}
+
+func (es *ExpressionStatement) statementNode() {
 }
 
 // Identifier represents an identifier.
@@ -67,9 +132,14 @@ type Identifier struct {
 	Value string
 }
 
-// TokenLiteral returns a text representation of the identifier.
+// TokenLiteral returns the token literal of the identifier.
 func (i *Identifier) TokenLiteral() string {
 	return i.Token.Literal
+}
+
+// String returns a text representation of the identifier.
+func (i *Identifier) String() string {
+	return i.Value
 }
 
 func (i *Identifier) expressionNode() {
