@@ -144,3 +144,22 @@ func (i *Identifier) String() string {
 
 func (i *Identifier) expressionNode() {
 }
+
+// IntegerLiteral represents an integer literal.
+type IntegerLiteral struct {
+	Token token.Token // token.INT
+	Value int64
+}
+
+// TokenLiteral returns the token literal of the integer.
+func (i *IntegerLiteral) TokenLiteral() string {
+	return i.Token.Literal
+}
+
+// String returns a text representation of the integer.
+func (i *IntegerLiteral) String() string {
+	return i.Token.Literal
+}
+
+func (i *IntegerLiteral) expressionNode() {
+}
