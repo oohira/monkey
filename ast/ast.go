@@ -153,6 +153,35 @@ func (pe *PrefixExpression) String() string {
 func (pe *PrefixExpression) expressionNode() {
 }
 
+// InfixExpression represents an expression with infix operator.
+type InfixExpression struct {
+	Token    token.Token
+	Operator string
+	Left     Expression
+	Right    Expression
+}
+
+// TokenLiteral returns the first token literal of the infix expression.
+func (ie *InfixExpression) TokenLiteral() string {
+	return ie.Token.Literal
+}
+
+// String returns a text representation of the infix expression.
+func (ie *InfixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(ie.Left.String())
+	out.WriteString(" " + ie.Operator + " ")
+	out.WriteString(ie.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
+func (ie *InfixExpression) expressionNode() {
+}
+
 // Identifier represents an identifier.
 type Identifier struct {
 	Token token.Token // token.IDENT
